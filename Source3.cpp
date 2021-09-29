@@ -3,6 +3,7 @@
 #include<time.h>
 #include<conio.h>
 #include <thread>
+int score = 0;
 void gotoxy(int x, int y)
 {
 	COORD c = { x, y };
@@ -23,6 +24,10 @@ void clear_bullet(int x, int y)
 void draw_star(int x, int y)
 {
 	gotoxy(x, y); printf("*");
+}
+void display_score(int x, int y)
+{
+	gotoxy(x, y); printf("Score: %d",score);
 }
 void clear_star(int x, int y)
 {
@@ -48,25 +53,27 @@ int main()
 	int sx, sy, j;
 	int bullet = 0;
 	int check = 1;
+	int jack = 0;
 	draw_ship(x, y);
+	display_score(80, 1);
 	do {
-		for (int j = 0; j < 20 && check == 1; j++)
+		for (jack; jack < 20 && check == 1; jack++)
 		{
 			sx = rand() % 100;
 			sy = rand() % 10;
 			char checkstar = cursor(sx, sy);
-			while (checkstar == '*')
+			/*while (checkstar == '*')
 			{
-				while (sx < 10 && sx>70)
-				{
-
-					sx = rand() % 100;
-				}
-				while (sy < 2 && sx>5)
-				{
-					sx = rand() % 10;
-				}
+				
 				checkstar = cursor(sx, sy);
+			}*/
+			while (sx < 10 || sx>70)
+			{
+				sx = rand() % 100;
+			}
+			while (sy < 2 || sy>5)
+			{
+				sy = rand() % 10;
 			}
 			draw_star(sx, sy);
 		}
@@ -82,14 +89,23 @@ int main()
 			char hit = cursor(bx, by - 2);
 			
 			clear_bullet(bx, by);
-			if (by == 2|| hit=='*') 
+			if (by == 2) 
 			{ 
 				bullet = 0;
+			}
+			else if (hit == '*')
+			{
 				clear_star(bx, by - 2);
+				bullet = 0;
+				jack -= 1;
+				check = 1;
+				score += 1;
+				display_score(80, 1);
+				Beep(700, 100);
 			}
 			else { draw_bullet(bx, --by); }
-			Beep(700, 100);
 		}
+
 		
 		Sleep(100);
 	} while (ch != 'x');

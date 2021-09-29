@@ -55,8 +55,9 @@ int main()
 	draw_ship(x1, y1);
 	int status = 0;
 	int fire = 0;
+	int bulletleft = 5;
 	do {
-		if (_kbhit()) 
+		if (_kbhit())
 		{
 			ch = _getch();
 			if (ch == 'a')
@@ -71,9 +72,10 @@ int main()
 			{
 				status = 0;
 			}
-			if (ch == ' ')
+			if (ch == ' '&&bulletleft!=0&&fire==0)
 			{
 				fire = 1;
+				bulletleft -= 1;
 			}
 		}
 		if (status == 1)
@@ -93,9 +95,9 @@ int main()
 		}
 		if (fire == 0)
 		{
-			x2 = x1+2; 
+			x2 = x1 + 2;
 		}
-		if (fire == 1)
+		if (fire == 1&&bulletleft>0)
 		{
 			erase_bullet(x2, y2);
 			draw_bullet(x2, --y2);

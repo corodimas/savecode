@@ -50,10 +50,11 @@ int main()
 	char ch = '.';
 	int x = 38, y = 20;
 	int bx, by, i;
-	int sx, sy, j;
+	int sx ,sy, j;
 	int bullet = 0;
 	int check = 1;
 	int jack = 0;
+
 	draw_ship(x, y);
 	display_score(80, 1);
 	do {
@@ -61,19 +62,19 @@ int main()
 		{
 			sx = rand() % 100;
 			sy = rand() % 10;
-			char checkstar = cursor(sx, sy);
-			/*while (checkstar == '*')
-			{
-				
-				checkstar = cursor(sx, sy);
-			}*/
-			while (sx < 10 || sx>70)
+			char check2 = cursor(sx, sy);
+			while (sx < 10 || sx>70||sy < 2 || sy>5)
 			{
 				sx = rand() % 100;
-			}
-			while (sy < 2 || sy>5)
-			{
 				sy = rand() % 10;
+				check2 = cursor(sx, sy);
+				while (check2 == '*')
+				{
+					sx = rand() % 100;
+					sy = rand() % 10;
+					check2 = cursor(sx, sy);
+				}
+
 			}
 			draw_star(sx, sy);
 		}

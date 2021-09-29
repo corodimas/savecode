@@ -72,7 +72,7 @@ int main()
 			{
 				status = 0;
 			}
-			if (ch == ' '&&bulletleft!=0&&fire==0)
+			if (ch == ' ' && bulletleft != 0 && fire == 0)
 			{
 				fire = 1;
 				bulletleft -= 1;
@@ -97,7 +97,7 @@ int main()
 		{
 			x2 = x1 + 2;
 		}
-		if (fire == 1&&bulletleft>0)
+		if (fire == 1)
 		{
 			erase_bullet(x2, y2);
 			draw_bullet(x2, --y2);

@@ -1,83 +1,153 @@
 #include <SFML/Graphics.hpp>
-#include<iostream>
+#include <iostream>
+
+
+sf::RenderWindow mywindow(sf::VideoMode(850, 1000, 32), "Sqirroad");
+sf::View view(sf::Vector2f(850.0f, 350.0f),sf::Vector2f(850.0f, 1000.0f));
+sf::Event ev;
+
+int tilesize = 50;
+float y = 850;
+float x = 350;
+float movespeed = 5.0;
+
+bool move[4];
+bool walking;
+int nextspot;
+enum MOVE { UP, DOWN, LEFT, RIGHT };
+sf::Sprite character;
+sf::Texture pytexture;
+int spriteSizex = pytexture.getSize().x / 3;
+int spriteSizey = pytexture.getSize().y / 4;
+int animationFrame = 0;
+
+
+
+void keymove()
+{
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)&&y>=0)
+    {
+        if (walking == false)
+        {
+            nextspot = y - tilesize;
+            move[UP] = true;
+            walking = true;
+
+        }
+
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S )&& y<=850)
+    {
+        if (walking == false)
+        {
+            nextspot = y + tilesize;
+            move[DOWN] = true;
+            walking = true;
+        }
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)&&x>= 0)
+    {
+        if (walking == false)
+        {
+            nextspot = x - tilesize;
+            move[LEFT] = true;
+            walking = true;
+        }
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)&&x <= 700)
+    {
+        if (walking == false)
+        {
+            nextspot = x + tilesize;
+            move[RIGHT] = true;
+            walking = true;
+        }
+    }
+}
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(1080, 720), "SFML works!");
-	sf::CircleShape shape(100.f);
-	shape.setPosition(200.f, 200.f);
-	//texture
-	sf::Texture pytexture;
 	if (!pytexture.loadFromFile("image/char/squrrial.png"))
 	{
 		std::cout << "Load fail" << std::endl;
 	}
-	sf::Texture cartexture;
-	if (!cartexture.loadFromFile("image/enimie/ca3.png"))
-	{
-		std::cout << "Load car fail" << std::endl;
-	}
-
-	//spirte char
-	sf::Sprite character;
 	character.setTexture(pytexture);
-	character.setScale(sf::Vector2f(4, 4));
+	character.setScale(sf::Vector2f(2.5, 2.5));
+    int spriteSizex = pytexture.getSize().x / 3;
+    int spriteSizey = pytexture.getSize().y / 4;
+	character.setTextureRect(sf::IntRect(spriteSizex * animationFrame, spriteSizey * 3, spriteSizex, spriteSizey));
 	
-	int spriteSizex = pytexture.getSize().x / 3;
-	int spriteSizey = pytexture.getSize().y / 4;
-
-	character.setTextureRect(sf::IntRect(0, 0, spriteSizex, spriteSizey));
-	sf::Vector2f spawPoint = {0.f, 0.f};
-	character.setPosition(spawPoint);
-	int animationFrame = 0;
-
-	//sprite car
-	sf::Sprite car1;
-	car1.setTexture(cartexture);
-
-
-	
-	
-	shape.setFillColor(sf::Color::Green);
-	while (window.isOpen())
+	for (int i = 0; i < 4; ++i)
+		move[i] = false;
+    walking = false;
+    mywindow.setVerticalSyncEnabled(true);
+	while (mywindow.isOpen())
 	{
-		sf::Event event;
-		while (window.pollEvent(event))
+		while (mywindow.pollEvent(ev))
 		{
-			if (event.type == sf::Event::Closed)
-				window.close();
+			if (ev.type == sf::Event::Closed)mywindow.close();
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		{
-			character.move(1.f,0.f);
-			character.setTextureRect(sf::IntRect(spriteSizex * animationFrame, spriteSizey * 2, spriteSizex, spriteSizey));
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		{
-			character.move(-.1f, 0.f);
-			character.setTextureRect(sf::IntRect(spriteSizex * animationFrame, spriteSizey * 1, spriteSizex, spriteSizey));
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		{
-			character.move(0.f, -.1f);
-			character.setTextureRect(sf::IntRect(spriteSizex * animationFrame, spriteSizey * 3, spriteSizex, spriteSizey));
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		{
-			character.move(0.f, .1f);
-			character.setTextureRect(sf::IntRect(spriteSizex * animationFrame, 0, spriteSizex, spriteSizey));
-		}
-		animationFrame++;
-		car1.move(0.01f, 0.01f);
+        keymove();
+        if (walking == true)
+        {
+            if (move[UP] == true)
+            {
+                y -= movespeed;
+                if (y <= nextspot)
+                {
+                    y = nextspot;
+                    walking = false;
+                    move[UP] = false;
+                }
+                character.setTextureRect(sf::IntRect(spriteSizex * animationFrame, spriteSizey * 3, spriteSizex, spriteSizey));
+            }
 
-		if (animationFrame >= 3) {
-			animationFrame = 0;
-		}
+            if (move[DOWN] == true)
+            {
+                y += movespeed;
+                if (y >= nextspot)
+                {
+                    y = nextspot;
+                    walking = false;
+                    move[DOWN] = false;
+                }
+                character.setTextureRect(sf::IntRect(spriteSizex * animationFrame, 0, spriteSizex, spriteSizey));
+            }
+            if (move[LEFT] == true)
+            {
+                x -= movespeed;
+                if (x <= nextspot)
+                {
+                    x = nextspot;
+                    walking = false;
+                    move[LEFT] = false;
+                }
+                character.setTextureRect(sf::IntRect(spriteSizex * animationFrame, spriteSizey * 1, spriteSizex, spriteSizey));
+            }
+            if (move[RIGHT] == true)
+            {
+                x += movespeed;
+                if (x >= nextspot)
+                {
+                    x = nextspot;
+                    walking = false;
+                    move[RIGHT] = false;
+                }
+                character.setTextureRect(sf::IntRect(spriteSizex * animationFrame, spriteSizey * 2, spriteSizex, spriteSizey));
+            }
+        }
 
-		window.clear();
-		window.draw(character);
-		window.draw(car1);
-		window.display();
+        animationFrame++;
+        if (animationFrame >= 3) {
+            animationFrame = 0;
+        }
+
+        character.setPosition(x, y);
+        mywindow.clear(sf::Color(0, 200, 0));
+        mywindow.draw(character);
+        mywindow.display();
 	}
-	return 0;
 }
